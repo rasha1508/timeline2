@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wedding Timeline</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Dancing+Script:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary-color: #d4a5a5;
+        --secondary-color: #f2e6e6;
+        --accent-color: #f9f2f2;
+        --text-color: #6d4c41;
+        --light-text: #8d6e63;
+        --border-color: rgba(212, 165, 165, 0.3);
+      }
+      /* Reset box model globally */
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #fafafa;
+        margin: 0;
+        padding: 20px;
+        color: var(--text-color);
+      }
+      /* Container styling */
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(212, 165, 165, 0.15);
+      }
+      /* Header styling */
+      h1 {
+        font-family: "Dancing Script", cursive;
+        font-size: 2.5rem;
+        color: var(--text-color);
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+      }
+      h1::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--primary-color),
+          transparent
+        );
+        border-radius: 2px;
+      }
+      /* Timeline styles */
+      .timeline-wrapper {
+        position: relative;
+        margin: 40px 0;
+        padding: 40px 0;
+        background: linear-gradient(to bottom, #fefefe, #f8f4f4);
+        border-radius: 15px;
+      }
+      .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 0 20px;
+      }
+      .timeline-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.5rem;
+        color: var(--text-color);
+      }
+      .clear-all-btn {
+        background: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 8px 16px;
+        font-size: 14px;
+        border-radius: 20px;
+      }
+      .clear-all-btn:hover {
+        background: var(--primary-color);
+        color: white;
+      }
+      /* Vertical Timeline */
+      .timeline {
+        position: relative;
+        max-width: 1000px;
+        margin: 0 auto;
+        min-height: 100px;
+      }
+      /* The vertical line - only show when there are events */
+      .timeline.has-events::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(212, 165, 165, 0.1),
+          rgba(212, 165, 165, 0.5) 20%,
+          rgba(212, 165, 165, 0.5) 80%,
+          rgba(212, 165, 165, 0.1)
+        );
+        border-radius: 2px;
+      }
+      /* Timeline items */
+      .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+        width: 50%;
+        padding: 0 10px;
+        box-sizing: border-box;
+        opacity: 0;
+        animation: fadeIn 0.5s forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      /* Left side items */
+      .timeline-item:nth-child(odd) {
+        left: 0;
+        text-align: right;
+        padding-right: 10px;
+      }
+      /* Right side items */
+      .timeline-item:nth-child(even) {
+        left: 50%;
+        text-align: left;
+        padding-left: 10px;
+      }
+      /* Timeline dot */
+      .timeline-dot {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(212, 165, 165, 0.2);
+        z-index: 1;
+      }
+      /* Position dots */
+      .timeline-item:nth-child(odd) .timeline-dot {
+        right: -10px;
+      }
+      .timeline-item:nth-child(even) .timeline-dot {
+        left: -10px;
+      }
+      /* Timeline content - Circular and closer to line */
+      .timeline-content {
+        background: white;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        box-shadow: 0 5px 15px rgba(212, 165, 165, 0.1);
+        border: 2px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+      }
+      .timeline-content:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(212, 165, 165, 0.2);
+        border-color: var(--primary-color);
+      }
+      /* Timeline icon */
+      .timeline-icon {
+        width: 35px;
+        height: 35px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        margin-bottom: 5px;
+        box-shadow: 0 3px 10px rgba(212, 165, 165, 0.3);
+      }
+      /* Timeline title */
+      .timeline-title-text {
+        font-family: "Playfair Display", serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 3px;
+        max-width: 80%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      /* Timeline time */
+      .timeline-time {
+        background: var(--secondary-color);
+        color: var(--text-color);
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 9px;
+        display: inline-block;
+      }
+      /* Timeline description - hidden in circle, shown in modal */
+      .timeline-description {
+        display: none;
+      }
+      /* Empty timeline message */
+      .empty-timeline {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--light-text);
+      }
+      .empty-timeline i {
+        font-size: 48px;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+      }
+      .empty-timeline p {
+        font-size: 18px;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      /* Notification style */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        opacity: 0;
+        transform: translateX(400px);
+        transition: all 0.3s;
+        z-index: 999;
+      }
+      .notification.show {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .notification i {
+        color: var(--primary-color);
+      }
+      /* Modal styles - enhanced */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(3px);
+      }
+      .modal-content {
+        background-color: white;
+        border-radius: 15px;
+        padding: 30px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        position: relative;
+        animation: modalFadeIn 0.3s ease;
+        border: 1px solid var(--border-color);
+      }
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--light-text);
+        transition: color 0.2s;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+      .modal-close:hover {
+        color: white;
+        background: var(--primary-color);
+      }
+      .modal-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--border-color);
+      }
+      .modal-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-right: 15px;
+        box-shadow: 0 4px 8px rgba(212, 165, 165, 0.3);
+      }
+      .modal-title {
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+      .modal-time {
+        background: var(--primary-color);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        display: inline-block;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(212, 165, 165, 0.2);
+      }
+      .modal-description {
+        color: var(--light-text);
+        font-size: 16px;
+        margin-bottom: 25px;
+        line-height: 1.5;
+        min-height: 50px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+      }
+      .modal-actions button {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+      .edit-btn {
+        background: #aed581;
+      }
+      .edit-btn:hover {
+        background: #9ccc65;
+      }
+      .delete-btn {
+        background: #ef9a9a;
+      }
+      .delete-btn:hover {
+        background: #e57373;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Wedding Day Timeline</h1>
+      
+      <!-- Timeline -->
+      <div class="timeline-wrapper">
+        <div class="timeline-header">
+          <h2 class="timeline-title">Wedding Day Events</h2>
+          <button class="clear-all-btn" id="clear-all-btn">
+            <i class="fas fa-trash-alt"></i> Clear All
+          </button>
+        </div>
+        <div class="timeline" id="timeline">
+          <div class="empty-timeline" id="empty-timeline">
+            <i class="fas fa-calendar-day"></i>
+            <p>No events added yet. Add events using the Wedding Event Form widget!</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Notification -->
+      <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text"></span>
+      </div>
+    </div>
+    
+    <!-- Event Modal -->
+    <div class="modal" id="event-modal">
+      <div class="modal-content">
+        <span class="modal-close" id="modal-close">&times;</span>
+        <div class="modal-header">
+          <div class="modal-icon" id="modal-icon">
+            <i class="fas fa-ring"></i>
+          </div>
+          <h2 class="modal-title" id="modal-title">Event Title</h2>
+        </div>
+        <div class="modal-time" id="modal-time">Event Time</div>
+        <div class="modal-description" id="modal-description">
+          Event description goes here.
+        </div>
+        <div class="modal-actions">
+          <button class="edit-btn" id="modal-edit-btn">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="delete-btn" id="modal-delete-btn">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const timeline = document.getElementById("timeline");
+        const emptyTimeline = document.getElementById("empty-timeline");
+        const notification = document.getElementById("notification");
+        const notificationText = document.getElementById("notification-text");
+        const clearAllBtn = document.getElementById("clear-all-btn");
+        
+        // Modal elements
+        const modal = document.getElementById("event-modal");
+        const modalClose = document.getElementById("modal-close");
+        const modalIcon = document.getElementById("modal-icon");
+        const modalTitle = document.getElementById("modal-title");
+        const modalTime = document.getElementById("modal-time");
+        const modalDescription = document.getElementById("modal-description");
+        const modalEditBtn = document.getElementById("modal-edit-btn");
+        const modalDeleteBtn = document.getElementById("modal-delete-btn");
+        
+        let events = [];
+        let currentEventId = null;
+        
+        // Load from local storage
+        function loadEvents() {
+          const saved = localStorage.getItem("weddingTimelineEvents");
+          if (saved) {
+            events = JSON.parse(saved);
+            renderEvents();
+          }
+        }
+        
+        function saveEvents() {
+          localStorage.setItem("weddingTimelineEvents", JSON.stringify(events));
+          // Dispatch a custom event to notify the form widget
+          window.dispatchEvent(new CustomEvent('weddingEventsUpdated', { detail: events }));
+        }
+        
+        function showNotification(msg) {
+          notificationText.textContent = msg;
+          notification.classList.add("show");
+          setTimeout(() => {
+            notification.classList.remove("show");
+          }, 3000);
+        }
+        
+        // Listen for custom events from the form widget
+        window.addEventListener('weddingEventsUpdated', (e) => {
+          events = e.detail;
+          renderEvents();
+        });
+        
+        // Also listen for storage events in case the form widget is in a different browser context
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'weddingTimelineEvents') {
+            loadEvents();
+          }
+        });
+        
+        // Clear all events
+        clearAllBtn.addEventListener("click", () => {
+          if (events.length === 0) {
+            showNotification("No events to clear");
+            return;
+          }
+          if (confirm("Are you sure you want to clear all events?")) {
+            events = [];
+            saveEvents();
+            renderEvents();
+            showNotification("All events cleared successfully!");
+          }
+        });
+        
+        // Render events
+        function renderEvents() {
+          // Clear previous
+          timeline.innerHTML = "";
+          if (events.length === 0) {
+            timeline.innerHTML = `
+              <div class="empty-timeline">
+                  <i class="fas fa-calendar-day"></i>
+                  <p>No events added yet. Add events using the Wedding Event Form widget!</p>
+              </div>
+            `;
+            // Remove has-events class to hide the timeline line
+            timeline.classList.remove("has-events");
+            return;
+          }
+          
+          // Add has-events class to show the timeline line
+          timeline.classList.add("has-events");
+          
+          // Sort by time
+          const sorted = [...events].sort((a, b) => {
+            if (!a.time) return 1;
+            if (!b.time) return -1;
+            return a.time.localeCompare(b.time);
+          });
+          
+          // Add each event
+          sorted.forEach((event, index) => {
+            const div = document.createElement("div");
+            div.className = "timeline-item";
+            div.style.animationDelay = `${index * 0.1}s`;
+            div.innerHTML = `
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-icon"><i class="${event.icon}"></i></div>
+                <div class="timeline-title-text">${event.name}</div>
+                <div class="timeline-time">${event.time || "No time"}</div>
+                <div class="timeline-description">${
+                  event.description || "No description"
+                }</div>
+              </div>
+            `;
+            timeline.appendChild(div);
+            
+            // Add click event to show modal
+            div.addEventListener("click", () => {
+              showEventModal(event);
+            });
+          });
+        }
+        
+        // Show event modal
+        function showEventModal(event) {
+          currentEventId = event.id;
+          modalIcon.innerHTML = `<i class="${event.icon}"></i>`;
+          modalTitle.textContent = event.name;
+          modalTime.textContent = event.time || "No time set";
+          modalDescription.textContent = event.description || "No description";
+          modal.style.display = "flex";
+        }
+        
+        // Close modal
+        modalClose.addEventListener("click", () => {
+          modal.style.display = "none";
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener("click", (e) => {
+          if (e.target === modal) {
+            modal.style.display = "none";
+          }
+        });
+        
+        // Edit event from modal
+        modalEditBtn.addEventListener("click", () => {
+          modal.style.display = "none";
+          // Store the event ID in localStorage for the form widget to pick up
+          localStorage.setItem("editingEventId", currentEventId);
+          showNotification("Please edit the event in the Wedding Event Form widget");
+        });
+        
+        // Delete event from modal
+        modalDeleteBtn.addEventListener("click", () => {
+          modal.style.display = "none";
+          deleteEvent(currentEventId);
+        });
+        
+        function deleteEvent(id) {
+          if (confirm("Are you sure you want to delete this event?")) {
+            events = events.filter((e) => e.id !== id);
+            saveEvents();
+            renderEvents();
+            showNotification("Event deleted successfully!");
+          }
+        }
+        
+        // Initialize
+        loadEvents();
+      });
+    </script>
+  </body>
+</html>
